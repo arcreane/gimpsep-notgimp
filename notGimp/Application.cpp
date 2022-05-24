@@ -1,6 +1,7 @@
 #include "Application.h"
 #include "opencv2/opencv.hpp"
 #include "filters.h"
+#include <future>
 
 namespace ngp {
 
@@ -26,12 +27,7 @@ namespace ngp {
 	void Application::Run() {
 		while (ReadFile());
 		std::cout << MANUAL << std::endl;
-		cv::imshow("notGimp", s_Mat);
-		cv::waitKey(25);
-		while (askForFunction()) {
-			cv::imshow("notGimp", s_Mat);
-			cv::waitKey(25);
-		};
+		while (askForFunction());
 	}
 
 
@@ -146,16 +142,30 @@ namespace ngp {
 		return 0.0;
 	}
 
-
+	
 	int Application::askForFunction() {
-		std::cout << "Awaiting for function (type 'man' for help)"<< std::endl;
-		std::string input;
-		std::getline(std::cin, input);
+		std::cout << "Awaiting for function (type 'man' for help)" << std::endl;
 
-		std::string delimiter = " ";
-		std::vector<std::string> args = split(input, delimiter);
-		return parseCommand(args);
+		bool display = true;
+		auto futureParse = std::async(std::launch::async, [] {
+			std::string input;
+			std::getline(std::cin, input);
+			return input;
+			});
 
+		while (display) {
+			cv::imshow("Output", s_Mat);
+
+			if (futureParse._Is_ready()) {
+				std::string awaitedInput = futureParse.get();
+				std::string delimiter = " ";
+				std::vector<std::string> args = split(awaitedInput, delimiter);
+				display = false;
+				return parseCommand(args);
+			}
+			cv::waitKey(10);
+		}
+		return 0;
 	}
 
 	std::vector<std::string> Application::split(std::string s, std::string delimiter) {
