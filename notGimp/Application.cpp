@@ -13,7 +13,9 @@ namespace ngp {
 		"exit : closes the application\n"
 		"erode <distance> <erosion type [0-2]> : erodes the image\n"
 		"dilate <distance> <dilate type [0-2]> : dilates the image\n"
-		"resize <new width> <new height> <interpolation type [0-4]> : resize the image\n"
+		"resize <new width> <new height> <interpolation type [0-4]> : resize the image to the width and height selected (number of pixels)\n"
+		"brightness <value> : linearly change brightness by the amount of value\n"
+		"contrast <value> : linearly change contrast by the amount of value\n"
 		"\n";
 
 	Application::Application() {
@@ -93,6 +95,26 @@ namespace ngp {
 			return 1;
 		}
 
+		//Brightness
+		if (func_name == "brightness") {
+			if (args.size() == 2) {
+				filters::brightness(s_Mat, parseInt(args[1]));
+				return 1;
+			}
+			std::cout << WRONG_ARG_COUNT << std::endl;
+			return 1;
+		}
+
+		//Contrast
+		if (func_name == "contrast") {
+			if (args.size() == 2) {
+				filters::contrast(s_Mat, parseDouble(args[1]));
+				return 1;
+			}
+			std::cout << WRONG_ARG_COUNT << std::endl;
+			return 1;
+		}
+
 		//Manual
 		if (func_name == "man") {
 			std::cout << MANUAL << std::endl;
@@ -114,6 +136,15 @@ namespace ngp {
 		return 0;
 	}
 
+	double Application::parseDouble(std::string toBeParsed) {
+		try {
+			return stod(toBeParsed);
+		}
+		catch (std::exception& err) {
+			std::cout << "Wrong parameter type provided" << std::endl;
+		}
+		return 0.0;
+	}
 
 
 	int Application::askForFunction() {

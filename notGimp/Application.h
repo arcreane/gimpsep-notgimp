@@ -16,6 +16,7 @@ namespace ngp {
 		int parseCommand(std::vector<std::string> args);
 		int askForFunction();
 		int parseInt(std::string toBeParsed);
+		double parseDouble(std::string toBeParsed);
 	};
 
 
