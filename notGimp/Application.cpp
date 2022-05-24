@@ -11,8 +11,9 @@ namespace ngp {
 		"Available functions:\n"
 		"man : shows this manual\n"
 		"exit : closes the application\n"
-		"erode <distance> <erosion type [0-2] : erodes the image>\n"
-		"dilate <distance> <dilate type [0-2] : dilates the image>\n"
+		"erode <distance> <erosion type [0-2]> : erodes the image\n"
+		"dilate <distance> <dilate type [0-2]> : dilates the image\n"
+		"resize <new width> <new height> <interpolation type [0-4]> : resize the image\n"
 		"\n";
 
 	Application::Application() {
@@ -76,12 +77,22 @@ namespace ngp {
 		//Dilate
 		if (func_name == "dilate") {
 			if (args.size() == 3) {
-				filters::dilate(s_Mat, stoi(args[1]), stoi(args[2]));
+				filters::dilate(s_Mat, parseInt(args[1]), parseInt(args[2]));
 				return 1;
 			}
 			std::cout << WRONG_ARG_COUNT << std::endl;
 			return 1;
 		}
+		//Resize
+		if (func_name == "resize") {
+			if (args.size() == 4) {
+				filters::resize(s_Mat, parseInt(args[1]), parseInt(args[2]), parseInt(args[3]));
+				return 1;
+			}
+			std::cout << WRONG_ARG_COUNT << std::endl;
+			return 1;
+		}
+
 		//Manual
 		if (func_name == "man") {
 			std::cout << MANUAL << std::endl;
