@@ -10,7 +10,7 @@ int const max_kernel_size = 21;
 
 
 
-void ngp::filters::dilate(cv::Mat& srcfile, int dilation_size, int dilation_elem) {
+void ngp::filters::dilate(cv::Mat& srcfile, int dilation_size, int dilation_elem = 0) {
 	int dilation_type = 0;
 	if (dilation_elem == 0) { dilation_type = cv::MORPH_RECT; }
 	else if (dilation_elem == 1) { dilation_type = cv::MORPH_CROSS; }
@@ -25,7 +25,7 @@ void ngp::filters::dilate(cv::Mat& srcfile, int dilation_size, int dilation_elem
 
 }
 
-void ngp::filters::erode(cv::Mat& srcfile, int erosion_size,int erosion_elem) {
+void ngp::filters::erode(cv::Mat& srcfile, int erosion_size,int erosion_elem = 0) {
 
 	int erosion_type = 0;
 	if (erosion_elem == 0) { erosion_type = cv::MORPH_RECT; }

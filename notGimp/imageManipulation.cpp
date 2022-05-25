@@ -3,7 +3,7 @@
 #include "opencv2/highgui.hpp"
 #include <iostream>
 #include "filters.h"
-void ngp::filters::resize(cv::Mat& srcfile, int width, int height, int interpolation) {
+void ngp::filters::resize(cv::Mat& srcfile, int width, int height, int interpolation = 1) {
 	int interpolation_type = 0;
 	if(interpolation == 0) { interpolation_type = cv::INTER_NEAREST; }
 	else if (interpolation == 1) {interpolation_type = cv::INTER_LINEAR; }
