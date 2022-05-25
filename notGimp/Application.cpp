@@ -1,13 +1,15 @@
 #include "Application.h"
 #include "opencv2/opencv.hpp"
 #include "filters.h"
+#include "Utils.h"
 #include <future>
 
 
 namespace ngp {
 
+	const std::string WRONG_ARG_COUNT = "Wrong argument count given, see manual for correct command use";
 
-	std::string WRONG_ARG_COUNT = "Wrong argument count given, see manual for correct command use";
+	const int MILLIS_UNTIL_NEXT_INPUT_CHECK = 25;
 
 	const char* MANUAL =
 		"Available functions:\n"
@@ -21,42 +23,6 @@ namespace ngp {
 		"\n";
 
 
-	int parseInt(std::string toBeParsed) {
-		try {
-			return stoi(toBeParsed);
-		}
-		catch (std::exception& err) {
-			std::cout << "Wrong parameter type provided" << std::endl;
-		}
-		return 0;
-	}
-
-	double parseDouble(std::string toBeParsed) {
-		try {
-			return stod(toBeParsed);
-		}
-		catch (std::exception& err) {
-			std::cout << "Wrong parameter type provided" << std::endl;
-		}
-		return 0.0;
-	}
-
-	std::vector<std::string> split(std::string s, std::string delimiter) {
-		size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-		std::string token;
-		std::vector<std::string> res;
-
-		while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
-			token = s.substr(pos_start, pos_end - pos_start);
-			pos_start = pos_end + delim_len;
-			res.push_back(token);
-		}
-
-		res.push_back(s.substr(pos_start));
-		return res;
-	}
-
-
 	Application::Application() {
 		cv::Mat s_Mat;
 		//TODO Init event handlers
@@ -64,7 +30,6 @@ namespace ngp {
 
 	void Application::Run() {
 		while (ReadFile());
-		std::cout << MANUAL << std::endl;
 		while (askForFunction());
 	}
 
@@ -92,98 +57,40 @@ namespace ngp {
 			std::cout << "No arguments were provided" << std::endl;
 			return 1;
 		}
-		std::string func_name = args[0];
+		std::string funcName = args[0];
+		size_t argCount = args.size();
 
 
-		// 
-		// 
-		// This is where you will implement the calls to the functions
-		// check Erode & dialate for examples
-		// 
+		if (funcName == "erode" && argCount == 3) { filters::erode(s_Mat, parseInt(args[1]), parseInt(args[2])); }
+		if (funcName == "dilate" && argCount == 3) { filters::dilate(s_Mat, parseInt(args[1]), parseInt(args[2])); }
+		if (funcName == "resize" && argCount == 4) { filters::resize(s_Mat, parseInt(args[1]), parseInt(args[2]), parseInt(args[3])); }
+		if (funcName == "brightness" && argCount == 2) { filters::brightness(s_Mat, parseInt(args[1])); }
+		if (funcName == "contrast" && argCount == 2) { filters::contrast(s_Mat, parseDouble(args[1])); }
 
-		//Erode
-		if (func_name == "erode") {
-			if (args.size() == 3) {
-				filters::erode(s_Mat, parseInt(args[1]), parseInt(args[2]));
-				return 1;
-			}
-			std::cout << WRONG_ARG_COUNT << std::endl;
-			return 1;
-		}
-		//Dilate
-		if (func_name == "dilate") {
-			if (args.size() == 3) {
-				filters::dilate(s_Mat, parseInt(args[1]), parseInt(args[2]));
-				return 1;
-			}
-			std::cout << WRONG_ARG_COUNT << std::endl;
-			return 1;
-		}
-		//Resize
-		if (func_name == "resize") {
-			if (args.size() == 4) {
-				filters::resize(s_Mat, parseInt(args[1]), parseInt(args[2]), parseInt(args[3]));
-				return 1;
-			}
-			std::cout << WRONG_ARG_COUNT << std::endl;
-			return 1;
-		}
+		if (funcName == "man" || funcName == "help") { std::cout << MANUAL << std::endl; }
 
-		//Brightness
-		if (func_name == "brightness") {
-			if (args.size() == 2) {
-				filters::brightness(s_Mat, parseInt(args[1]));
-				return 1;
-			}
-			std::cout << WRONG_ARG_COUNT << std::endl;
-			return 1;
-		}
-
-		//Contrast
-		if (func_name == "contrast") {
-			if (args.size() == 2) {
-				filters::contrast(s_Mat, parseDouble(args[1]));
-				return 1;
-			}
-			std::cout << WRONG_ARG_COUNT << std::endl;
-			return 1;
-		}
-
-		//Manual
-		if (func_name == "man") {
-			std::cout << MANUAL << std::endl;
-			return 1;
-		}
-		//Exit
-		if (func_name == "exit") {
-			return 0;
-		}
+		if (funcName == "exit") { return 0; }
+		return 1;
 	}
 
 
 	int Application::askForFunction() {
+		cv::imshow("Output", s_Mat);
 		std::cout << "Awaiting for function (type 'man' for help)" << std::endl;
 
-		bool display = true;
 		auto futureParse = std::async(std::launch::async, [] {
 			std::string input;
 			std::getline(std::cin, input);
 			return input;
 			});
 
-		while (display) {
-			cv::imshow("Output", s_Mat);
-
-			if (futureParse._Is_ready()) {
-				std::string awaitedInput = futureParse.get();
-				std::string delimiter = " ";
-				std::vector<std::string> args = split(awaitedInput, delimiter);
-				display = false;
-				return parseCommand(args);
-			}
-			cv::waitKey(10);
+		while (!futureParse._Is_ready()) {
+			cv::waitKey(MILLIS_UNTIL_NEXT_INPUT_CHECK);
 		}
-		return 0;
+		std::string awaitedInput = futureParse.get();
+		std::string delimiter = " ";
+		std::vector<std::string> args = split(awaitedInput, delimiter);
+		return parseCommand(args);
 	}
 
 
