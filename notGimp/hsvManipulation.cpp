@@ -21,7 +21,7 @@
 	}
 
 	void ngp::filters::contrast(cv::Mat& srcfile, double value) {
-		srcfile.convertTo(srcfile, -1, value, 0);
+		srcfile.convertTo(srcfile, -1, std::abs(value), 0);
 	}
 
 	void perHueManipulation(cv::Mat& srcfile, int value) {

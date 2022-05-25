@@ -76,7 +76,7 @@ namespace ngp {
 
 	int Application::askForFunction() {
 		cv::imshow("Output", s_Mat);
-		std::cout << "Awaiting for function (type 'man' for help)" << std::endl;
+		std::cout << ">>> ";
 
 		auto futureParse = std::async(std::launch::async, [] {
 			std::string input;
