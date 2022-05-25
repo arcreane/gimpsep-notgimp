@@ -3,6 +3,7 @@
 #include "filters.h"
 #include <future>
 
+
 namespace ngp {
 
 
@@ -18,6 +19,43 @@ namespace ngp {
 		"brightness <value> : linearly change brightness by the amount of value\n"
 		"contrast <value> : linearly change contrast by the amount of value\n"
 		"\n";
+
+
+	int parseInt(std::string toBeParsed) {
+		try {
+			return stoi(toBeParsed);
+		}
+		catch (std::exception& err) {
+			std::cout << "Wrong parameter type provided" << std::endl;
+		}
+		return 0;
+	}
+
+	double parseDouble(std::string toBeParsed) {
+		try {
+			return stod(toBeParsed);
+		}
+		catch (std::exception& err) {
+			std::cout << "Wrong parameter type provided" << std::endl;
+		}
+		return 0.0;
+	}
+
+	std::vector<std::string> split(std::string s, std::string delimiter) {
+		size_t pos_start = 0, pos_end, delim_len = delimiter.length();
+		std::string token;
+		std::vector<std::string> res;
+
+		while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
+			token = s.substr(pos_start, pos_end - pos_start);
+			pos_start = pos_end + delim_len;
+			res.push_back(token);
+		}
+
+		res.push_back(s.substr(pos_start));
+		return res;
+	}
+
 
 	Application::Application() {
 		cv::Mat s_Mat;
@@ -122,27 +160,7 @@ namespace ngp {
 		}
 	}
 
-	int Application::parseInt(std::string toBeParsed) {
-		try {
-			return stoi(toBeParsed);
-		}
-		catch (std::exception & err) {
-			std::cout << "Wrong parameter type provided" << std::endl;
-		}
-		return 0;
-	}
 
-	double Application::parseDouble(std::string toBeParsed) {
-		try {
-			return stod(toBeParsed);
-		}
-		catch (std::exception& err) {
-			std::cout << "Wrong parameter type provided" << std::endl;
-		}
-		return 0.0;
-	}
-
-	
 	int Application::askForFunction() {
 		std::cout << "Awaiting for function (type 'man' for help)" << std::endl;
 
@@ -168,20 +186,6 @@ namespace ngp {
 		return 0;
 	}
 
-	std::vector<std::string> Application::split(std::string s, std::string delimiter) {
-		size_t pos_start = 0, pos_end, delim_len = delimiter.length();
-		std::string token;
-		std::vector<std::string> res;
-
-		while ((pos_end = s.find(delimiter, pos_start)) != std::string::npos) {
-			token = s.substr(pos_start, pos_end - pos_start);
-			pos_start = pos_end + delim_len;
-			res.push_back(token);
-		}
-
-		res.push_back(s.substr(pos_start));
-		return res;
-	}
 
 
 }

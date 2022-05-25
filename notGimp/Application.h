@@ -12,11 +12,8 @@ namespace ngp {
 	private:
 		cv::Mat s_Mat;
 		int ReadFile();
-		std::vector<std::string> split(std::string s, std::string delimiter);
 		int parseCommand(std::vector<std::string> args);
 		int askForFunction();
-		int parseInt(std::string toBeParsed);
-		double parseDouble(std::string toBeParsed);
 	};
 
 
