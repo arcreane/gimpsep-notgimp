@@ -15,11 +15,11 @@ namespace ngp {
 		"Available functions:\n"
 		"man : shows this manual\n"
 		"exit : closes the application\n"
-		"erode <distance> <erosion type [0-2]> : erodes the image\n"
-		"dilate <distance> <dilate type [0-2]> : dilates the image\n"
+		"erode <distance> <erosion type [0-2]> : expands dark areas\n"
+		"dilate <distance> <dilate type [0-2]> : expands bright areas\n"
 		"resize <new width> <new height> <interpolation type [0-4]> : resize the image to the width and height selected (number of pixels)\n"
-		"brightness <value> : linearly change brightness by the amount of value\n"
-		"contrast <value> : linearly change contrast by the amount of value\n"
+		"brightness <value> : linearly change brightness\n"
+		"contrast <value> : linearly change contrast\n"
 		"\n";
 
 
