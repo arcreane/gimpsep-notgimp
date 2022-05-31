@@ -20,6 +20,9 @@ namespace ngp {
 		"resize <new width> <new height> <interpolation type [0-4]> : resize the image to the width and height selected (number of pixels)\n"
 		"brightness <value> : linearly change brightness\n"
 		"contrast <value> : linearly change contrast\n"
+		"brightness <value> : linearly change brightness by the amount of value\n"
+		"contrast <value> : linearly change contrast by the amount of value\n"
+		"canny <minimum threshold value [0-100]>: detects edges of the image\n"
 		"\n";
 
 
@@ -66,6 +69,7 @@ namespace ngp {
 		if (funcName == "resize" && argCount == 4) { filters::resize(s_Mat, parseInt(args[1]), parseInt(args[2]), parseInt(args[3])); }
 		if (funcName == "brightness" && argCount == 2) { filters::brightness(s_Mat, parseInt(args[1])); }
 		if (funcName == "contrast" && argCount == 2) { filters::contrast(s_Mat, parseDouble(args[1])); }
+		if (funcName == "canny" && argCount == 2) { filters::contrast(s_Mat, parseInt(args[1])); }
 
 		if (funcName == "man" || funcName == "help") { std::cout << MANUAL << std::endl; }
 
