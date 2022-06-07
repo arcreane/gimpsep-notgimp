@@ -20,8 +20,7 @@ namespace ngp {
 		"resize <new width> <new height> <interpolation type [0-4]> : resize the image to the width and height selected (number of pixels)\n"
 		"brightness <value> : linearly change brightness\n"
 		"contrast <value> : linearly change contrast\n"
-		"brightness <value> : linearly change brightness by the amount of value\n"
-		"contrast <value> : linearly change contrast by the amount of value\n"
+		"panorama <path list> : stitch ? sans lilo\n"
 		"canny <minimum threshold value [0-100]>: detects edges of the image\n"
 		"\n";
 
@@ -32,28 +31,44 @@ namespace ngp {
 	}
 
 	void Application::Run() {
-		while (ReadFile());
+		while (openFile());
 		while (askForFunction());
 	}
 
 
-	int Application::ReadFile() {
+	int Application::openFile() {
 		std::cout << "Please provide an absolute link to an image" << std::endl;
 		std::string input;
 		std::getline(std::cin, input);
 
+		return readFile(s_Mat, input);
+	}
+
+	int Application::readFile(cv::Mat& matrix, std::string path) {
 		try {
-			std::string image_path = cv::samples::findFile(input);
-			s_Mat = cv::imread(image_path, cv::IMREAD_COLOR);
+			std::string image_path = cv::samples::findFile(path);
+			matrix = cv::imread(image_path, cv::IMREAD_COLOR);
 			std::cout << "Image opened at : " << image_path << std::endl;
 		}
 		catch (cv::Exception) {
-			std::cout << "Could not read the image with path: " << input << " please provide valid link" << std::endl;
+			std::cout << "Could not read the image with path: " << path << " please provide valid link" << std::endl;
 			return 1;
 		}
 		return 0;
 	}
 
+
+	std::vector<cv::Mat> Application::readFiles(std::vector<std::string> args) {
+		std::vector<cv::Mat> matrices = std::vector<cv::Mat>();
+		matrices.push_back(s_Mat);
+		for (int i = 1; i < args.size();++i)
+		{
+			auto matrix = cv::Mat();
+			readFile(matrix, args[i]);
+			matrices.push_back(matrix);
+		}
+		return matrices;
+	}
 
 	int Application::parseCommand(std::vector<std::string> args) {
 		if (!args.size()) {
@@ -70,14 +85,17 @@ namespace ngp {
 		if (funcName == "brightness" && argCount == 2) { filters::brightness(s_Mat, parseInt(args[1])); }
 		if (funcName == "contrast" && argCount == 2) { filters::contrast(s_Mat, parseDouble(args[1])); }
 		if (funcName == "canny" && argCount == 2) { filters::contrast(s_Mat, parseInt(args[1])); }
-
+		if (funcName == "panorama" && argCount > 1) {
+			std::vector<cv::Mat> files = readFiles(args);
+			filters::panorama(s_Mat, files);
+		}
 		if (funcName == "man" || funcName == "help") { std::cout << MANUAL << std::endl; }
 
 		if (funcName == "exit") { return 0; }
 		return 1;
 	}
 
-
+	
 	int Application::askForFunction() {
 		cv::imshow("Output", s_Mat);
 		std::cout << ">>> ";

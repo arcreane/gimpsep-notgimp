@@ -7,5 +7,6 @@ namespace ngp {
 		void contrast(cv::Mat& srcfile, double value);
 		void brightness(cv::Mat& srcfile, int value);
 		void canny(cv::Mat& srcfile, int min_threshold);
+		void panorama(cv::Mat& srcfile, std::vector<cv::Mat>& srcfiles);
 	}
 }

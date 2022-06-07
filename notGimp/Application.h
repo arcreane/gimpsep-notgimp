@@ -12,9 +12,11 @@ namespace ngp {
 
 	private:
 		cv::Mat s_Mat;
-		int ReadFile();
+		int openFile();
 		int parseCommand(std::vector<std::string> args);
 		int askForFunction();
+		int readFile(cv::Mat& matrix, std::string path);
+		std::vector<cv::Mat> readFiles(std::vector<std::string> args);
 	};
 
 
