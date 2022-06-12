@@ -20,7 +20,7 @@ namespace ngp {
 		"resize <new width> <new height> <interpolation type [0-4]> : resize the image to the width and height selected (number of pixels)\n"
 		"brightness <value> : linearly change brightness\n"
 		"contrast <value> : linearly change contrast\n"
-		"panorama <path list> : stitch ? sans lilo\n"
+		"panorama <path list> : stitch this image and others provided they overlap sufficiently (enter one absolute path per image)\n"
 		"canny <minimum threshold value [0-100]>: detects edges of the image\n"
 		"\n";
 
